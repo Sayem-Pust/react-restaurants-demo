@@ -17,6 +17,7 @@ import {
 } from "reactstrap";
 import { Control, LocalForm, Errors } from "react-redux-form";
 import { Link } from "react-router-dom";
+import Loading from './LoadingComponent';
 // import CommentForm from './CommentFormComponent';
 
 const required = (val) => val && val.length;
@@ -35,17 +36,23 @@ class CommentForm extends Component {
     });
   };
   handleSubmit(values) {
-    console.log("Current State is: " + JSON.stringify(values));
-    alert(
-      "Current State is: " +
-        JSON.stringify({
-          author: values.author,
-          rating: values.rating,
-          comment: values.comment,
-        })
-    );
+    // console.log("Current State is: " + JSON.stringify(values));
+    // alert(
+    //   "Current State is: " +
+    //     JSON.stringify({
+    //       author: values.author,
+    //       rating: values.rating,
+    //       comment: values.comment,
+    //     })
+    // );
     // event.preventDefault();
     this.toggleModal();
+    this.props.addComment(
+      this.props.dishId,
+      values.rating,
+      values.author,
+      values.comment
+    );
   }
   render() {
     return (
@@ -136,7 +143,7 @@ class DishDetails extends Component {
     else return <div></div>;
   }
 
-  renderComments(comments) {
+  renderComments(comments, addComment, dishId) {
     const comment = comments.map((comment) => {
       // var date = new Date(comment.date);
       // const months = [
@@ -180,7 +187,7 @@ class DishDetails extends Component {
           <b>Comments</b>
         </h4>
         <div className="list-unstyled">{comment}</div>
-        <CommentForm />
+        <CommentForm dishId={dishId} addComment={addComment}/>
       </div>
     );
   }
@@ -188,14 +195,36 @@ class DishDetails extends Component {
   render() {
     const menu = this.props.dish;
     const comments_props = this.props.comments;
+    const addComment = this.props.addComment;
+    const dishId = this.props.dish.id
+    const isLoading = this.props.isLoading;
+    const errMess = this.props.errMess
     console.log(comments_props);
+
+    if (isLoading) {
+      return (
+        <div className="container">
+          <div className="row">
+            <Loading />
+          </div>
+        </div>
+      );
+    } else if (errMess) {
+      return (
+        <div className="container">
+          <div className="row">
+            <h4>{errMess}</h4>
+          </div>
+        </div>
+      );
+    }
 
     if (menu == null) {
       return <div></div>;
     }
 
     const dishDetail = this.renderDish(menu);
-    const comments = this.renderComments(comments_props);
+    const comments = this.renderComments(comments_props, addComment, dishId);
     return (
       <div className="container">
         <div className="row">
