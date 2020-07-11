@@ -8,6 +8,7 @@ import {
   CardTitle,
   CardSubtitle,
 } from "reactstrap";
+import { baseUrl } from "../shared/baseUrl";
 
 export default function HomeComponent(props) {
   function RenderCard({ item, isLoading, errMess }) {
@@ -19,7 +20,7 @@ export default function HomeComponent(props) {
     else
       return (
         <Card>
-          <CardImg src={item.image} alt={item.name} />
+          <CardImg src={baseUrl + item.image} alt={item.name} />
           <CardBody>
             <CardTitle>{item.name}</CardTitle>
             {item.designation ? (
@@ -41,7 +42,11 @@ export default function HomeComponent(props) {
           />
         </div>
         <div className="col-12 col-md m-1">
-          <RenderCard item={props.promotion} />
+          <RenderCard
+            item={props.promotion}
+            isLoading={props.promoLoading}
+            errMess={props.promoErrMess}
+          />
         </div>
         <div className="col-12 col-md m-1">
           <RenderCard item={props.leader} />
